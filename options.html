@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>TL;DR Settings</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    form {
+      max-width: 400px;
+    }
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+    input, textarea, select {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      box-sizing: border-box;
+    }
+    button {
+      margin-top: 15px;
+      padding: 10px 15px;
+    }
+  </style>
+</head>
+<body>
+  <h1>TL;DR Settings</h1>
+  <form id="options-form">
+    <label for="baseUrl">Base URL</label>
+    <input type="text" id="baseUrl" placeholder="https://api.openai.com/v1">
+
+    <label for="apiKey">API Key</label>
+    <input type="text" id="apiKey" placeholder="Enter your API key">
+
+    <label for="prompt">System prompt</label>
+    <textarea id="prompt" rows="3" value="Summarize this in 3 bullet points..." placeholder="Summarize this in 3 bullet points...">Summarize this in 3 bullet points...</textarea>
+    
+    <label for="model">Model</label>
+    <input type="text" id="model" value="o3-mini" placeholder="o3-mini">
+
+    <button type="submit">Save settings</button>
+  </form>
+  <script src="options.js"></script>
+</body>
+</html>
