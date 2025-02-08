@@ -84,7 +84,7 @@ async function createOrUpdatePopup(tabId, summaryText) {
 
 async function summarizeText(text, tabId) {
   chrome.storage.sync.get(
-    { baseUrl: '', apiKey: '', prompt: 'Summarize this in 3 bullet points...', model: 'o3-mini' },
+    { baseUrl: '', apiKey: '', prompt: 'Summarize this text in 3 bullet points. Return plain HTML only, do not use code blocks.', model: 'o3-mini' },
     async (items) => {
       if (!items.baseUrl || !items.apiKey) {
         chrome.scripting.executeScript({

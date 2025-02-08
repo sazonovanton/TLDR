@@ -4,46 +4,168 @@
   <meta charset="UTF-8">
   <title>TL;DR Settings</title>
   <style>
+    :root {
+      --primary-color: #2563eb;
+      --primary-hover: #1d4ed8;
+      --bg-color: #f8fafc;
+      --input-bg: #ffffff;
+      --text-color: #1e293b;
+      --border-color: #e2e8f0;
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      margin: 20px;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      margin: 0;
+      padding: 2rem;
+      background: var(--bg-color);
+      color: var(--text-color);
+      line-height: 1.5;
     }
+
+    h1 {
+      font-size: 1.875rem;
+      font-weight: 600;
+      margin-bottom: 2rem;
+      color: var(--text-color);
+    }
+
+    .container {
+      max-width: 500px;
+      margin: 0 auto;
+      padding: 2rem;
+      background: var(--input-bg);
+      border-radius: 12px;
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    }
+
     form {
-      max-width: 400px;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
     }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
     label {
-      display: block;
-      margin-top: 10px;
+      font-weight: 500;
+      font-size: 0.875rem;
+      color: var(--text-color);
     }
+
     input, textarea, select {
       width: 100%;
-      padding: 8px;
-      margin-top: 5px;
+      padding: 0.75rem 1rem;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      background: var(--input-bg);
+      color: var(--text-color);
+      font-size: 0.875rem;
+      transition: all 0.2s ease;
       box-sizing: border-box;
     }
-    button {
-      margin-top: 15px;
-      padding: 10px 15px;
+
+    input:focus, textarea:focus, select:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    .api-key-container {
+      position: relative;
+    }
+
+    .toggle-visibility {
+      position: absolute;
+      right: 1rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      font-size: 1.25rem;
+      color: var(--text-color);
+      opacity: 0.7;
+      transition: opacity 0.2s ease;
+    }
+
+    .toggle-visibility:hover {
+      opacity: 1;
+    }
+
+    button[type="submit"] {
+      background: var(--primary-color);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 6px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      margin-top: 1rem;
+    }
+
+    button[type="submit"]:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+
+    .success-message {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      background: #10b981;
+      color: white;
+      padding: 1rem 1.5rem;
+      border-radius: 6px;
+      font-weight: 500;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      transform: translateX(120%);
+      transition: transform 0.3s ease;
+    }
+
+    .success-message.show {
+      transform: translateX(0);
     }
   </style>
 </head>
 <body>
-  <h1>TL;DR Settings</h1>
-  <form id="options-form">
-    <label for="baseUrl">Base URL</label>
-    <input type="text" id="baseUrl" placeholder="https://api.openai.com/v1">
+  <div class="container">
+    <h1>TL;DR Settings</h1>
+    <form id="options-form">
+      <div class="form-group">
+        <label for="baseUrl">Base URL</label>
+        <input type="text" id="baseUrl" placeholder="https://api.openai.com/v1">
+      </div>
 
-    <label for="apiKey">API Key</label>
-    <input type="text" id="apiKey" placeholder="Enter your API key">
+      <div class="form-group">
+        <label for="apiKey">API Key</label>
+        <div class="api-key-container">
+          <input type="password" id="apiKey" placeholder="Enter your API key">
+          <button type="button" class="toggle-visibility" title="Toggle visibility">👁️</button>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="model">Model</label>
+        <input type="text" id="model" placeholder="o3-mini">
+      </div>
 
-    <label for="prompt">System prompt</label>
-    <textarea id="prompt" rows="3" value="Summarize this in 3 bullet points..." placeholder="Summarize this in 3 bullet points...">Summarize this in 3 bullet points...</textarea>
-    
-    <label for="model">Model</label>
-    <input type="text" id="model" value="o3-mini" placeholder="o3-mini">
+      <div class="form-group">
+        <label for="prompt">System prompt</label>
+        <textarea id="prompt" rows="3" placeholder="Summarize this text in 3 bullet points. Return plain HTML only, do not use code blocks."></textarea>
+      </div>
 
-    <button type="submit">Save settings</button>
-  </form>
+      <button type="submit">Save settings</button>
+    </form>
+  </div>
+
+  <div class="success-message" id="success-message">Settings saved successfully!</div>
+
   <script src="options.js"></script>
 </body>
 </html>
