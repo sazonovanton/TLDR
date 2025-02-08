@@ -7,45 +7,162 @@ async function createOrUpdatePopup(tabId, summaryText) {
     }
     const style = document.createElement('style');
     style.textContent = `
+      @keyframes modalFadeIn {
+        from { opacity: 0; transform: scale(0.95); }
+        to { opacity: 1; transform: scale(1); }
+      }
+      
       .tldr-modal-overlay {
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0,0,0,0.5);
+        background: rgba(0, 0, 0, 0.4);
+        backdrop-filter: blur(4px);
         z-index: 9999;
         display: flex;
         align-items: center;
         justify-content: center;
+        animation: modalFadeIn 0.2s ease-out;
       }
+      
       .tldr-modal {
-        background: #fff;
-        padding: 20px;
-        border-radius: 8px;
-        max-width: 80%;
-        max-height: 80%;
+        background: #ffffff;
+        border-radius: 16px;
+        max-width: min(800px, 80%);
+        max-height: 80vh;
+        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+        border: 1px solid rgba(0, 0, 0, 0.1);
+        position: relative;
+        display: flex;
+        flex-direction: column;
         overflow: hidden;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.3);
       }
-      .tldr-modal-close {
+
+      .tldr-modal-content {
+        flex: 1;
+        overflow-y: auto;
+        padding: 25px 25px 15px;
+      }
+      
+      .tldr-modal-content::-webkit-scrollbar {
+        width: 8px;
+      }
+      
+      .tldr-modal-content::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      
+      .tldr-modal-content::-webkit-scrollbar-thumb {
+        background: #d1d5db;
+        border-radius: 4px;
+      }
+
+      .tldr-modal-footer {
+        padding: 15px 25px;
+        background: linear-gradient(to bottom, rgba(255,255,255,0) 0%, rgba(249,250,251,1) 15%);
+        border-top: 1px solid rgba(0,0,0,0.05);
+        display: flex;
+        justify-content: center;
+        position: relative;
+      }
+      
+      .tldr-modal-footer::before {
+        content: '';
         position: absolute;
-        top: 10px;
-        right: 15px;
-        font-size: 16px;
-        line-height: 1;
-        cursor: pointer;
+        top: -20px;
+        left: 0;
+        right: 0;
+        height: 20px;
+        background: linear-gradient(to bottom, rgba(255,255,255,0), #fff);
+        pointer-events: none;
       }
+      
+      @keyframes modalFadeOut {
+        from { opacity: 1; transform: scale(1); }
+        to { opacity: 0; transform: scale(0.95); }
+      }
+
+      .tldr-modal-close {
+        padding: 10px 32px;
+        font-size: 14px;
+        color: #fff;
+        background: #3b82f6;
+        border: none;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        font-weight: 500;
+      }
+      
+      .tldr-modal-close:hover {
+        background: #2563eb;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+      }
+
+      .tldr-modal-close::before {
+        content: "ESC";
+        font-size: 10px;
+        padding: 3px 5px;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 4px;
+        margin-right: 4px;
+      }
+      
       .markdown {
-        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
         white-space: pre-wrap;
         overflow-x: hidden;
         word-wrap: break-word;
-        line-height: 1.5;
+        line-height: 1.6;
         margin: 0;
-        padding: 10px;
-        background: #f8f8f8;
-        border-radius: 4px;
+        padding: 15px 20px;
+        color: #2c3e50;
+        background: rgba(255, 255, 255, 0.8);
+        border-radius: 12px;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      }
+      
+      .markdown ul {
+        padding-left: 25px;
+        margin: 10px 0;
+      }
+      
+      .markdown li {
+        margin: 8px 0;
+        position: relative;
+      }
+      
+      .markdown li::marker {
+        color: #3b82f6;
+      }
+
+      @keyframes softPulse {
+        0% { opacity: 0.5; transform: scale(0.98); }
+        50% { opacity: 1; transform: scale(1); }
+        100% { opacity: 0.5; transform: scale(0.98); }
+      }
+
+      .loading-state {
+        text-align: center;
+        padding: 40px;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        background: linear-gradient(135deg, #f0f9ff 0%, #e6f3ff 100%);
+        border-radius: 12px;
+      }
+
+      .loading-text {
+        font-size: 16px;
+        font-weight: 500;
+        color: #3b82f6;
+        animation: softPulse 2s ease-in-out infinite;
+        display: inline-block;
       }
     `;
     document.head.appendChild(style);
@@ -57,20 +174,50 @@ async function createOrUpdatePopup(tabId, summaryText) {
     const modal = document.createElement('div');
     modal.className = 'tldr-modal';
 
-    const closeButton = document.createElement('div');
-    closeButton.className = 'tldr-modal-close';
-    closeButton.textContent = '❌';
-    closeButton.onclick = () => {
-      overlay.remove();
-      style.remove();
-    };
-
+    const modalContent = document.createElement('div');
+    modalContent.className = 'tldr-modal-content';
+    
     const content = document.createElement('div');
     content.id = 'tldr-modal-content';
     content.innerHTML = '<div class="markdown">' + text + '</div>';
+    
+    const footer = document.createElement('div');
+    footer.className = 'tldr-modal-footer';
+    
+    const closeButton = document.createElement('button');
+    closeButton.className = 'tldr-modal-close';
+    closeButton.textContent = 'Close';
+    
+    // Function to close modal with animation
+    const closeModal = () => {
+      overlay.style.animation = 'modalFadeOut 0.2s ease-in forwards';
+      setTimeout(() => {
+        overlay.remove();
+        style.remove();
+      }, 200);
+    };
 
-    modal.appendChild(closeButton);
-    modal.appendChild(content);
+    // Close on button click
+    closeButton.onclick = closeModal;
+
+    // Close on overlay click (if clicked directly on overlay)
+    overlay.onclick = (e) => {
+      if (e.target === overlay) {
+        closeModal();
+      }
+    };
+
+    // Close on Escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && document.getElementById('tldr-modal-overlay')) {
+        closeModal();
+      }
+    });
+
+    modalContent.appendChild(content);
+    footer.appendChild(closeButton);
+    modal.appendChild(modalContent);
+    modal.appendChild(footer);
     overlay.appendChild(modal);
     document.body.appendChild(overlay);
   }
@@ -94,7 +241,7 @@ async function summarizeText(text, tabId) {
         return;
       }
 
-      await createOrUpdatePopup(tabId, "Summarizing... please wait");
+      await createOrUpdatePopup(tabId, '<div class="loading-state"><span class="loading-text">Preparing summary</span></div>');
 
       const payload = {
         model: items.model,
@@ -147,7 +294,7 @@ async function summarizeText(text, tabId) {
 
         setTimeout(() => {
           createOrUpdatePopup(tabId, summary);
-        }, 1500);
+        }, 1000);
       } catch (error) {
         chrome.scripting.executeScript({
           target: { tabId },
