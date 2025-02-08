@@ -4,6 +4,8 @@ English | [Russian](README.ru.md)
 
 This extension allows you to quickly obtain a brief summary of any web page or selected text. It helps you quickly retrieve the main ideas and points from a long text by querying the OpenAI API (or an alternative service).
 
+![Summary Screenshot](https://i.imgur.com/ux0F7ng.png)
+
 ## Features
 
 - **Toolbar Button:** Clicking extracts the entire page text and sends it for summarization.
@@ -47,4 +49,6 @@ Open the extension settings page:
 - Edit the "System Prompt" if necessary.
 - Enter the model name in the "Model" text field (default: **o3-mini**).
 
-Settings are saved when clicking the "Save Settings" button.
+Settings are saved when clicking the "Save settings" button.
+
+![Settings Screenshot](https://i.imgur.com/p9TcEQr.png)
