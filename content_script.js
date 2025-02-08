@@ -1,1 +1,1 @@
-console.log('Content script loaded for TL:DR extension.');
+console.log('Content script loaded for TL;DR extension.');

@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "TL:DR (Too Long; Didn't Read)",
+  "name": "TL;DR (Too Long; Didn't Read)",
   "version": "1.0",
   "description": "Summarize web pages with just one click.",
   "permissions": [
@@ -13,7 +13,7 @@
     "service_worker": "background.js"
   },
   "action": {
-    "default_title": "TL:DR",
+    "default_title": "TL;DR",
     "default_icon": {
       "16": "icons/icon16.png",
       "48": "icons/icon48.png",

@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function() {
   // Load saved settings
   chrome.storage.sync.get(
-    { baseUrl: '', apiKey: '', prompt: 'Summarize this text in 3 bullet points. Return plain HTML only, do not use code blocks.', model: 'o3-mini' },
+    { baseUrl: 'https://api.openai.com/v1', apiKey: '', prompt: 'Summarize this text in 3 bullet points. Return plain HTML only, do not use code blocks.', model: 'o3-mini' },
     function(items) {
       document.getElementById('baseUrl').value = items.baseUrl;
       document.getElementById('apiKey').value = items.apiKey;

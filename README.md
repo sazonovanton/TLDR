@@ -1,4 +1,4 @@
-# TL:DR (Too Long; Didn't Read) - Chrome Extension
+# TL;DR (Too Long; Didn't Read) - Chrome Extension
 
 English | [Russian](README.ru.md)  
 
@@ -44,7 +44,7 @@ This extension allows you to quickly obtain a brief summary of any web page or s
 ## Configuration
 
 Open the extension settings page:
-- Fill in the "Base URL" field (e.g., `https://api.openai.com/v1/completions`).
+- Fill in the "Base URL" field (default `https://api.openai.com/v1`, but can be changed to another service with OpenAI-compatible API like [Openrouter](https://openrouter.ai/)).
 - Enter your "API Key".
 - Edit the "System Prompt" if necessary.
 - Enter the model name in the "Model" text field (default: **o3-mini**).

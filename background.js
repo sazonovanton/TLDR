@@ -231,7 +231,7 @@ async function createOrUpdatePopup(tabId, summaryText) {
 
 async function summarizeText(text, tabId) {
   chrome.storage.sync.get(
-    { baseUrl: '', apiKey: '', prompt: 'Summarize this text in 3 bullet points. Return plain HTML only, do not use code blocks.', model: 'o3-mini' },
+    { baseUrl: 'https://api.openai.com/v1', apiKey: '', prompt: 'Summarize this text in 3 bullet points. Return plain HTML only, do not use code blocks.', model: 'o3-mini' },
     async (items) => {
       if (!items.baseUrl || !items.apiKey) {
         chrome.scripting.executeScript({
@@ -264,7 +264,9 @@ async function summarizeText(text, tabId) {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' + items.apiKey
+            'Authorization': 'Bearer ' + items.apiKey,
+            'HTTP-Referer': 'https://github.com/sazonovanton/TLDR',
+            'X-Title': 'TL;DR (Too Long; Didn\'t Read)'
           },
           body: JSON.stringify(payload)
         });

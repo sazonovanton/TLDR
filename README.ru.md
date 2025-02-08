@@ -1,4 +1,4 @@
-# TL:DR (Too Long; Didn't Read) - Chrome Расширение
+# TL;DR (Too Long; Didn't Read) - Chrome Расширение
 
 [English](README.md)  | Russian  
 
@@ -44,7 +44,7 @@
 ## Настройка
 
 Откройте страницу настроек расширения:
-- Заполните поле "Base URL" (например, `https://api.openai.com/v1/completions`).
+- Заполните поле "Base URL" (по умолчанию `https://api.openai.com/v1`, но можно изменить на другой сервис с OpenAI-совместимым API, как [Openrouter](https://openrouter.ai/)).
 - Введите ваш "API Key".
 - Отредактируйте "Системный промпт", если необходимо.
 - Введите название модели в текстовое поле "Модель" (по умолчанию: **o3-mini**).
