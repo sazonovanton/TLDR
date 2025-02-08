@@ -15,7 +15,15 @@ This extension allows you to quickly obtain a brief summary of any web page or s
   - Base URL for API
   - API Key
   - System prompt
-  - Model (text input field, default: "o3-mini")
+  - Model (text field, default: "o3-mini")
+  - Advanced Settings:
+    - Temperature (default: 0.8, range: 0-2.0) - Controls randomness in the output
+    - Top p (default: 1.0, range: 0-1.0) - Controls diversity via nucleus sampling
+    - Top k (default: 0, integer ≥ 0) - Limits the cumulative probability of tokens
+    - Frequency Penalty (default: 0, range: -2.0 to 2.0) - Reduces repetition based on frequency
+    - Presence Penalty (default: 0, range: -2.0 to 2.0) - Encourages new topics
+    - Repetition Penalty (default: 0, range: -2.0 to 2.0) - Penalizes token repetition
+    - Max Tokens (optional, integer ≥ 1) - Maximum number of tokens to generate
 
 ## File Structure
 
@@ -51,4 +59,4 @@ Open the extension settings page:
 
 Settings are saved when clicking the "Save settings" button.
 
-![Settings Screenshot](https://i.imgur.com/p9TcEQr.png)
+![Settings Screenshot](https://i.imgur.com/fT1SddM.png)
