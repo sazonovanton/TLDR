@@ -2,7 +2,7 @@ async function createOrUpdatePopup(tabId, summaryText) {
   function displayPopup(text) {
     const existingContent = document.getElementById('tldr-modal-content');
     if (existingContent) {
-      existingContent.innerHTML = '<div class="markdown">' + text + '</div>';
+      existingContent.innerHTML = '<div class="markdown">' + window.parseMarkdown(text) + '</div>';
       return;
     }
     const style = document.createElement('style');
@@ -143,6 +143,25 @@ async function createOrUpdatePopup(tabId, summaryText) {
         color: #3b82f6;
       }
 
+      .markdown strong {
+        color: #1a365d;
+        font-weight: 600;
+      }
+
+      .markdown em {
+        color: #4a5568;
+        font-style: italic;
+      }
+
+      .markdown code {
+        background: #f1f5f9;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-family: monospace;
+        font-size: 0.9em;
+        color: #2d3748;
+      }
+
       @keyframes softPulse {
         0% { opacity: 0.5; transform: scale(0.98); }
         50% { opacity: 1; transform: scale(1); }
@@ -179,7 +198,7 @@ async function createOrUpdatePopup(tabId, summaryText) {
     
     const content = document.createElement('div');
     content.id = 'tldr-modal-content';
-    content.innerHTML = '<div class="markdown">' + text + '</div>';
+    content.innerHTML = '<div class="markdown">' + window.parseMarkdown(text) + '</div>';
     
     const footer = document.createElement('div');
     footer.className = 'tldr-modal-footer';
@@ -222,6 +241,13 @@ async function createOrUpdatePopup(tabId, summaryText) {
     document.body.appendChild(overlay);
   }
 
+  // First inject markdown-utils.js
+  await chrome.scripting.executeScript({
+    target: { tabId },
+    files: ['markdown-utils.js']
+  });
+
+  // Then execute the display function
   await chrome.scripting.executeScript({
     target: { tabId },
     function: displayPopup,
@@ -231,7 +257,7 @@ async function createOrUpdatePopup(tabId, summaryText) {
 
 async function summarizeText(text, tabId) {
   chrome.storage.sync.get(
-    { baseUrl: 'https://api.openai.com/v1', apiKey: '', prompt: 'Summarize this text in 3 bullet points. Return plain HTML only, do not use code blocks.', model: 'o3-mini' },
+    { baseUrl: 'https://api.openai.com/v1', apiKey: '', prompt: 'Summarize this text in 3 key points. Format each point as a proper Markdown.', model: 'o3-mini' },
     async (items) => {
       if (!items.baseUrl || !items.apiKey) {
         chrome.scripting.executeScript({

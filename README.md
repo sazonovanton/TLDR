@@ -10,7 +10,7 @@ This extension allows you to quickly obtain a brief summary of any web page or s
 
 - **Toolbar Button:** Clicking extracts the entire page text and sends it for summarization.
 - **Context Menu:** Allows summarizing selected text via right-click and choosing the "Summarize via TL;DR" command.
-- **API Integration:** Sending text for summarization using a predefined system prompt (default: "Summarize this text in 3 bullet points. Return plain HTML only, do not use code blocks."). API requests are configurable through settings.
+- **API Integration:** Sending text for summarization using a customizable system prompt (default: "Summarize this text in 3 key points. Format each point as a proper Markdown."). API requests are configurable through settings.
 - **Extension Settings:** Settings page allows you to set:
   - Base URL for API
   - API Key

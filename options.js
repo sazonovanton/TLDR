@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     {
       baseUrl: 'https://api.openai.com/v1',
       apiKey: '',
-      prompt: 'Summarize this text in 3 bullet points. Return plain HTML only, do not use code blocks.',
+      prompt: 'Summarize this text in 3 key points. Format each point as a proper Markdown.',
       model: 'o3-mini',
       temperature: '0.8',
       top_p: '1.0',
