@@ -243,20 +243,29 @@ async function summarizeText(text, tabId) {
 
       await createOrUpdatePopup(tabId, '<div class="loading-state"><span class="loading-text">Preparing summary</span></div>');
 
-      const payload = {
+      let payload = {
         model: items.model,
-        store: true,
+        store: false,
         messages: [
           {
             role: "system",
-            content: items.prompt || "Summarize this in 3 bullet points:"
+            content: items.prompt || "Summarize this in 3 bullet points: "
           },
           {
             role: "user",
             content: text
           }
-        ]
+        ],
+        temperature: parseFloat(items.temperature),
+        top_p: parseFloat(items.top_p),
+        top_k: parseInt(items.top_k),
+        frequency_penalty: parseFloat(items.frequency_penalty),
+        presence_penalty: parseFloat(items.presence_penalty),
+        repetition_penalty: parseFloat(items.repetition_penalty)
       };
+      if (items.max_tokens !== null && items.max_tokens !== '') {
+        payload.max_tokens = parseInt(items.max_tokens);
+      }
 
       try {
         const endpoint = items.baseUrl.endsWith('/chat/completions') ? items.baseUrl : items.baseUrl + '/chat/completions';
@@ -308,10 +317,12 @@ async function summarizeText(text, tabId) {
   );
 }
 
-chrome.contextMenus.create({
-  id: 'summarize-selection',
-  title: 'Summarize via TL;DR',
-  contexts: ['selection']
+chrome.contextMenus.removeAll(() => {
+  chrome.contextMenus.create({
+    id: 'summarize-selection',
+    title: 'Summarize via TL;DR',
+    contexts: ['selection']
+  });
 });
 
 chrome.contextMenus.onClicked.addListener((info, tab) => {
@@ -320,21 +331,38 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
   }
 });
 
-chrome.action.onClicked.addListener((tab) => {
-  if (tab.id) {
-    chrome.scripting.executeScript({
+chrome.action.onClicked.addListener(async (tab) => {
+  if (!tab.id) return;
+
+  try {
+    if (tab.url?.startsWith('chrome://')) {
+      await chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        func: () => alert('Cannot summarize chrome:// pages')
+      });
+      return;
+    }
+
+    const results = await chrome.scripting.executeScript({
       target: { tabId: tab.id },
       func: () => document.body.innerText
-    }, (results) => {
-      if (chrome.runtime.lastError || !results || !results[0].result) {
-        chrome.scripting.executeScript({
-          target: { tabId: tab.id },
-          func: () => alert('Failed to extract text from the page.')
-        });
-        return;
-      }
-      const pageText = results[0].result;
-      summarizeText(pageText, tab.id);
+    });
+
+    if (!results || !results[0].result) {
+      await chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        func: () => alert('Failed to extract text from the page.')
+      });
+      return;
+    }
+
+    const pageText = results[0].result;
+    summarizeText(pageText, tab.id);
+  } catch (error) {
+    chrome.scripting.executeScript({
+      target: { tabId: tab.id },
+      func: (errMsg) => alert('Error: ' + errMsg),
+      args: [error.message]
     });
   }
 });

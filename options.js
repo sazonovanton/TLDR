@@ -1,19 +1,38 @@
 document.addEventListener('DOMContentLoaded', function() {
   // Load saved settings
   chrome.storage.sync.get(
-    { baseUrl: 'https://api.openai.com/v1', apiKey: '', prompt: 'Summarize this text in 3 bullet points. Return plain HTML only, do not use code blocks.', model: 'o3-mini' },
+    {
+      baseUrl: 'https://api.openai.com/v1',
+      apiKey: '',
+      prompt: 'Summarize this text in 3 bullet points. Return plain HTML only, do not use code blocks.',
+      model: 'o3-mini',
+      temperature: '0.8',
+      top_p: '1.0',
+      top_k: '0',
+      frequency_penalty: '0',
+      presence_penalty: '0',
+      repetition_penalty: '0',
+      max_tokens: null
+    },
     function(items) {
       document.getElementById('baseUrl').value = items.baseUrl;
       document.getElementById('apiKey').value = items.apiKey;
       document.getElementById('prompt').value = items.prompt;
       document.getElementById('model').value = items.model;
+      document.getElementById('temperature').value = items.temperature;
+      document.getElementById('top_p').value = items.top_p;
+      document.getElementById('top_k').value = items.top_k;
+      document.getElementById('frequency_penalty').value = items.frequency_penalty;
+      document.getElementById('presence_penalty').value = items.presence_penalty;
+      document.getElementById('repetition_penalty').value = items.repetition_penalty;
+      document.getElementById('max_tokens').value = items.max_tokens;
     }
   );
 
   // Handle API key visibility toggle
   const toggleVisibilityBtn = document.querySelector('.toggle-visibility');
   const apiKeyInput = document.getElementById('apiKey');
-  
+
   toggleVisibilityBtn.addEventListener('click', function() {
     const isPassword = apiKeyInput.type === 'password';
     apiKeyInput.type = isPassword ? 'text' : 'password';
@@ -28,8 +47,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const apiKey = document.getElementById('apiKey').value;
     const prompt = document.getElementById('prompt').value;
     const model = document.getElementById('model').value;
+    const temperature = document.getElementById('temperature').value;
+    const top_p = document.getElementById('top_p').value;
+    const top_k = document.getElementById('top_k').value;
+    const frequency_penalty = document.getElementById('frequency_penalty').value;
+    const presence_penalty = document.getElementById('presence_penalty').value;
+    const repetition_penalty = document.getElementById('repetition_penalty').value;
+    const max_tokens = document.getElementById('max_tokens').value;
 
-    chrome.storage.sync.set({ baseUrl, apiKey, prompt, model }, function() {
+    chrome.storage.sync.set({ baseUrl, apiKey, prompt, model, temperature, top_p, top_k, frequency_penalty, presence_penalty, repetition_penalty, max_tokens }, function() {
       // Show success message
       const successMessage = document.getElementById('success-message');
       successMessage.classList.add('show');
@@ -49,6 +75,16 @@ document.addEventListener('DOMContentLoaded', function() {
     });
     input.addEventListener('blur', function() {
       this.parentElement.classList.remove('focused');
+    });
+  });
+
+  // Handle reset buttons for advanced settings
+  document.querySelectorAll('.reset-button').forEach(button => {
+    button.addEventListener('click', function() {
+      const defaultValue = this.dataset.default;
+      const inputId = this.parentElement.getAttribute('for');
+      const input = document.getElementById(inputId);
+      input.value = defaultValue;
     });
   });
 });

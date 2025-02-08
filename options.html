@@ -5,12 +5,136 @@
   <title>TL;DR Settings</title>
   <style>
     :root {
+      /* Base colors */
       --primary-color: #2563eb;
       --primary-hover: #1d4ed8;
       --bg-color: #f8fafc;
       --input-bg: #ffffff;
       --text-color: #1e293b;
       --border-color: #e2e8f0;
+      /* Advanced settings colors */
+      --group-bg: #f1f5f9;
+      --group-border: #e2e8f0;
+      --group-title: #475569;
+      --range-text: #64748b;
+      --reset-hover: #e2e8f0;
+    }
+
+    /* Advanced Settings Styles */
+    .advanced-settings {
+      margin-top: 1rem;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .advanced-settings summary {
+      padding: 0.5rem 0.75rem;
+      cursor: pointer;
+      user-select: none;
+      background: var(--bg-color);
+      border-bottom: 1px solid var(--border-color);
+      transition: background-color 0.2s ease;
+      list-style: none;
+    }
+
+    .advanced-settings summary:hover {
+      background: var(--group-bg);
+    }
+
+    .advanced-settings summary::-webkit-details-marker,
+    .advanced-settings summary::marker {
+      display: none;
+    }
+
+    .summary-content {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-weight: 500;
+      color: var(--text-color);
+    }
+
+    .chevron-icon {
+      transition: transform 0.3s ease;
+      fill: currentColor;
+    }
+
+    .advanced-settings[open] .chevron-icon {
+      transform: rotate(90deg);
+    }
+
+    .advanced-content {
+      padding: 0.75rem;
+      background: var(--input-bg);
+    }
+
+    .settings-group {
+      padding: 0.75rem;
+      background: var(--group-bg);
+      border-radius: 6px;
+      margin-bottom: 0.75rem;
+    }
+
+    .settings-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .settings-group h3 {
+      font-size: 0.875rem;
+      color: var(--group-title);
+      margin: 0 0 0.5rem 0;
+      font-weight: 600;
+    }
+
+    .input-range {
+      font-size: 0.75rem;
+      color: var(--range-text);
+      margin-top: 0.25rem;
+    }
+
+    .reset-button {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0.25rem;
+      margin-left: 0.5rem;
+      border-radius: 4px;
+      color: var(--text-color);
+      opacity: 0.6;
+      transition: all 0.2s ease;
+    }
+
+    .reset-button:hover {
+      opacity: 1;
+      background: var(--reset-hover);
+    }
+
+    /* Tooltip styles */
+    .tooltip-wrapper {
+      position: relative;
+      width: 100%;
+    }
+
+    .tooltip {
+      display: none;
+      position: absolute;
+      top: -4px;
+      left: 0;
+      transform: translateY(-100%);
+      background: var(--text-color);
+      color: white;
+      padding: 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      width: 100%;
+      max-width: 250px;
+      z-index: 1000;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+
+    .tooltip-wrapper:hover .tooltip {
+      display: block;
     }
 
     body {
@@ -47,13 +171,24 @@
     .form-group {
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
+      gap: 0.25rem;
+      margin-bottom: 0.5rem;
     }
 
-    label {
-      font-weight: 500;
-      font-size: 0.875rem;
-      color: var(--text-color);
+    .form-group:last-child {
+      margin-bottom: 0;
+    }
+
+    .form-group input {
+      margin-bottom: 0.125rem;
+    }
+
+    .input-range {
+      font-size: 0.75rem;
+      color: var(--range-text);
+      margin-top: 0.125rem;
+      margin-bottom: 0.25rem;
+      opacity: 0.8;
     }
 
     input, textarea, select {
@@ -159,6 +294,107 @@
         <label for="prompt">System prompt</label>
         <textarea id="prompt" rows="3" placeholder="Summarize this text in 3 bullet points. Return plain HTML only, do not use code blocks."></textarea>
       </div>
+
+      <details class="advanced-settings">
+        <summary>
+          <span class="summary-content">
+            <svg class="chevron-icon" viewBox="0 0 24 24" width="16" height="16">
+              <path d="M9.293 6.293a1 1 0 011.414 0L15 10.586l-4.293 4.293a1 1 0 01-1.414-1.414L12.172 11 9.293 8.121a1 1 0 010-1.414z"/>
+            </svg>
+            Advanced Settings
+          </span>
+        </summary>
+        <div class="advanced-content">
+          <div class="settings-group">
+            <h3>Generation Parameters</h3>
+            <div class="form-group">
+              <div class="tooltip-wrapper">
+                <label for="temperature">
+                  Temperature
+                  <button type="button" class="reset-button" data-default="0.8" title="Reset to default (0.8)">↺</button>
+                </label>
+                <div class="tooltip">Controls randomness in the output. Higher values make the output more random, lower values make it more focused and deterministic.</div>
+              </div>
+              <input type="number" id="temperature" value="0.8" step="0.1" min="0" max="2.0">
+              <span class="input-range">Range: 0 to 2.0</span>
+            </div>
+            <div class="form-group">
+              <div class="tooltip-wrapper">
+                <label for="top_p">
+                  Top p
+                  <button type="button" class="reset-button" data-default="1.0" title="Reset to default (1.0)">↺</button>
+                </label>
+                <div class="tooltip">Controls diversity via nucleus sampling. Lower values mean less diversity.</div>
+              </div>
+              <input type="number" id="top_p" value="1.0" step="0.1" min="0" max="1.0">
+              <span class="input-range">Range: 0 to 1.0</span>
+            </div>
+            <div class="form-group">
+              <div class="tooltip-wrapper">
+                <label for="top_k">
+                  Top k
+                  <button type="button" class="reset-button" data-default="0" title="Reset to default (0)">↺</button>
+                </label>
+                <div class="tooltip">Limits the cumulative probability of tokens considered for sampling.</div>
+              </div>
+              <input type="number" id="top_k" value="0" step="1" min="0">
+              <span class="input-range">Range: 0 or above</span>
+            </div>
+          </div>
+
+          <div class="settings-group">
+            <h3>Penalty Controls</h3>
+            <div class="form-group">
+              <div class="tooltip-wrapper">
+                <label for="frequency_penalty">
+                  Frequency Penalty
+                  <button type="button" class="reset-button" data-default="0" title="Reset to default (0)">↺</button>
+                </label>
+                <div class="tooltip">Reduces repetition by penalizing tokens based on their frequency in the text.</div>
+              </div>
+              <input type="number" id="frequency_penalty" value="0" step="0.1" min="-2.0" max="2.0">
+              <span class="input-range">Range: -2.0 to 2.0</span>
+            </div>
+            <div class="form-group">
+              <div class="tooltip-wrapper">
+                <label for="presence_penalty">
+                  Presence Penalty
+                  <button type="button" class="reset-button" data-default="0" title="Reset to default (0)">↺</button>
+                </label>
+                <div class="tooltip">Encourages the model to talk about new topics by penalizing tokens that have appeared in the text.</div>
+              </div>
+              <input type="number" id="presence_penalty" value="0" step="0.1" min="-2.0" max="2.0">
+              <span class="input-range">Range: -2.0 to 2.0</span>
+            </div>
+            <div class="form-group">
+              <div class="tooltip-wrapper">
+                <label for="repetition_penalty">
+                  Repetition Penalty
+                  <button type="button" class="reset-button" data-default="0" title="Reset to default (0)">↺</button>
+                </label>
+                <div class="tooltip">Penalizes repetition of tokens that have already appeared in the generated text.</div>
+              </div>
+              <input type="number" id="repetition_penalty" value="0" step="0.1" min="-2.0" max="2.0">
+              <span class="input-range">Range: -2.0 to 2.0</span>
+            </div>
+          </div>
+
+          <div class="settings-group">
+            <h3>Length Control</h3>
+            <div class="form-group">
+              <div class="tooltip-wrapper">
+                <label for="max_tokens">
+                  Max Tokens
+                  <button type="button" class="reset-button" data-default="" title="Reset to default (no limit)">↺</button>
+                </label>
+                <div class="tooltip">Maximum number of tokens to generate. Leave empty for no limit.</div>
+              </div>
+              <input type="number" id="max_tokens" placeholder="No limit" min="1">
+              <span class="input-range">Range: 1 or above (optional)</span>
+            </div>
+          </div>
+        </div>
+      </details>
 
       <button type="submit">Save settings</button>
     </form>
