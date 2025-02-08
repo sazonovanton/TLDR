@@ -310,7 +310,7 @@ async function summarizeText(text, tabId) {
 
 chrome.contextMenus.create({
   id: 'summarize-selection',
-  title: 'Summarize via AI',
+  title: 'Summarize via TL;DR',
   contexts: ['selection']
 });
 
